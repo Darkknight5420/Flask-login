@@ -1,9 +1,11 @@
-from flask import Flask, render_template
+import os
+from flask import Flask, render_template, session, redirect
 import pymongo
 
 
 app = Flask(__name__)
 
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 client = pymongo.MongoClient('localhost', 27017)
 db = client.user_login_system
 
@@ -17,6 +19,8 @@ def home():
 
 @app.route("/dashboard/")
 def dashboard():
+    if not session.get('logged_in'):
+        return redirect('/')
     return render_template("dashboard.html")
 
 if __name__ == "__main__":
